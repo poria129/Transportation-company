@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Freights</title>
+</head>
+<body>
+    <h1>Freights</h1>
+    <a href="{% url 'index' %}">Home</a>
+    <ul>
+        {% for Freight in shipments %}
+        <li>
+            Freight from you to {{Freight.receiver_name}} {{Freight.receiver_familyname}} ID: {{Freight.pk}} <br>
+            In cost of : {{Freight.price}}$ <br>
+            Date of receiving the Freight: {{Freight.sending_date}}<br>
+            Date of delivery: {{Freight.receiving_date}}<br>
+            <br>
+            <br>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

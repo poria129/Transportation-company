@@ -9,7 +9,7 @@ class City(models.Model):
     country = models.CharField(max_length=100)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} {self.country}"
 
 
 class Package(models.Model):
@@ -36,10 +36,10 @@ class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="addresses")
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     street = models.CharField(max_length=100)
-    postal_code = models.CharField(max_length=20)
+    postal_code = models.CharField(max_length=20, null=True)
 
     def __str__(self):
-        return f"{self.street}, {self.city}, {self.postal_code}"
+        return f"{self.street}, {self.city}"
 
 
 class Shipment(models.Model):
@@ -58,7 +58,7 @@ class Shipment(models.Model):
     receiving_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
-        return f"Shipment from {self.sender_address} to {self.receiver_address}"
+        return f"Shipment from {self.user.first_name} to {self.receiver_name} "
 
     def get_location_code(self):
         if self.sender_address.city == self.receiver_address.city:
@@ -112,7 +112,7 @@ class Shipment(models.Model):
         location_code = self.get_location_code()
         sending_city_shipments = (
             Shipment.objects.filter(
-                sending_address__city=self.sending_address.city,
+                sender_address__city=self.sender_address.city,
                 sending_date__date=timezone.now().date(),
             )
             .exclude(pk=self.pk)

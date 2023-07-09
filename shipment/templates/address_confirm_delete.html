@@ -1,0 +1,9 @@
+<a href="{% url 'index' %}">Home</a>
+<h1>Confirm Address Deletion</h1>
+<p>Are you sure you want to delete the address:</p>
+<p>{{ object }}</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Delete</button>
+  <a href="{% url 'address_list' %}">Cancel</a>
+</form>

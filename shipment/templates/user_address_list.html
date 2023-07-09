@@ -1,0 +1,18 @@
+
+<h2>My Addresses</h2>
+<a href="{% url 'index' %}">Home</a>
+{% if addresses %}
+  <ul>
+    {% for address in addresses %}
+      <li>
+        {{ address }}
+        <form method="post" action="{% url 'delete_address' address.pk %}">
+          {% csrf_token %}
+          <button type="submit">Delete</button>
+        </form>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No addresses found.</p>
+{% endif %}
