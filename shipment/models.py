@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 
@@ -93,6 +92,16 @@ class Shipment(models.Model):
     def save(self, *args, **kwargs):
         if not self.sending_date or not self.receiving_date:
             location_code = self.get_location_code()
+            sending_city_shipments = (
+                Shipment.objects.filter(
+                    sender_address__city=self.sender_address.city,
+                    sending_date__date=timezone.now().date(),
+                )
+                .exclude(pk=self.pk)
+                .count()
+            )
+
+        if location_code != 1 and sending_city_shipments >= 10:
             if location_code == 1:
                 self.sending_date = timezone.now() + timezone.timedelta(days=1)
                 self.receiving_date = timezone.now() + timezone.timedelta(days=2)
@@ -103,23 +112,10 @@ class Shipment(models.Model):
                 self.sending_date = timezone.now() + timezone.timedelta(days=1)
                 self.receiving_date = timezone.now() + timezone.timedelta(days=15)
 
+            if sending_city_shipments >= 10:
+                self.sending_date += timezone.timedelta(days=1)
+                self.receiving_date += timezone.timedelta(days=1)
         if not self.price:
             self.price = self.calculate_price()
 
         super().save(*args, **kwargs)
-
-    def clean(self):
-        location_code = self.get_location_code()
-        sending_city_shipments = (
-            Shipment.objects.filter(
-                sender_address__city=self.sender_address.city,
-                sending_date__date=timezone.now().date(),
-            )
-            .exclude(pk=self.pk)
-            .count()
-        )
-
-        if location_code != 1 and sending_city_shipments >= 10:
-            raise ValidationError(
-                "Maximum number of shipments exceeded for the sending city."
-            )
