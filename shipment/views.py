@@ -33,6 +33,7 @@ class UserLogoutView(LogoutView):
 
 
 class ShipmentListView(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy("login")
     model = Shipment
     template_name = "shipment_list.html"
     context_object_name = "shipments"
@@ -43,6 +44,7 @@ class ShipmentListView(LoginRequiredMixin, ListView):
 
 
 class AddressView(LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy("login")
     model = Address
     form_class = AddressForm
     template_name = "create_address.html"
@@ -54,6 +56,7 @@ class AddressView(LoginRequiredMixin, CreateView):
 
 
 class UserAddressListView(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy("login")
     model = Address
     template_name = "user_address_list.html"
     context_object_name = "addresses"
@@ -64,12 +67,14 @@ class UserAddressListView(LoginRequiredMixin, ListView):
 
 
 class AddressDeleteView(LoginRequiredMixin, DeleteView):
+    login_url = reverse_lazy("login")
     model = Address
     template_name = "address_confirm_delete.html"
     success_url = reverse_lazy("address_list")
 
 
 class ShipmentCreateView(LoginRequiredMixin, CreateView):
+    login_url = reverse_lazy("login")
     model = Shipment
     form_class = ShipmentForm
     template_name = "create_shipment.html"
